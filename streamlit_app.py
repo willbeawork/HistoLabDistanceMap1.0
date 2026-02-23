@@ -109,27 +109,35 @@ if st.session_state.result is not None:
         hide_index=True
     )
 
-            # --- Map ---
-            user_lat, user_lon = to_latlon(postcode_row['Easting Grid Ref'], postcode_row['Northing Grid Ref'])
+ # --- Map ---
+    user_lat, user_lon = to_latlon(postcode_row['Easting Grid Ref'], postcode_row['Northing Grid Ref'])
 
-            m = folium.Map(location=[user_lat, user_lon], zoom_start=9, tiles="CartoDB positron")
+    m = folium.Map(location=[user_lat, user_lon], zoom_start=9, tiles="CartoDB positron")
 
-            # User postcode pin (blue)
-            folium.Marker(
-                location=[user_lat, user_lon],
-                popup=folium.Popup(f"<b>Your postcode</b><br>{postcode_input.strip().upper()}", max_width=200),
-                tooltip="Your postcode",
-                icon=folium.Icon(color="blue", icon="home", prefix="fa")
-            ).add_to(m)
+    # User postcode pin (blue)
+    folium.Marker(
+        location=[user_lat, user_lon],
+        popup=folium.Popup(f"<b>Your postcode</b><br>{st.session_state.searched_postcode}", max_width=200),
+        tooltip="Your postcode",
+        icon=folium.Icon(color="blue", icon="home", prefix="fa")
+    ).add_to(m)
 
-            # Lab pins (red)
-            for _, row in result.iterrows():
-                lab_lat, lab_lon = to_latlon(row['Easting'], row['Northing'])
-                folium.Marker(
-                    location=[lab_lat, lab_lon],
-                    popup=folium.Popup(f"<b>{row['Lab']}</b><br>{row['distance_km']} km away", max_width=200),
-                    tooltip=row['Lab'],
-                    icon=folium.Icon(color="red", icon="flask", prefix="fa")
-                ).add_to(m)
+    # Lab pins (red)
+    for _, row in result.iterrows():
+        lab_lat, lab_lon = to_latlon(row['Easting'], row['Northing'])
+        folium.Marker(
+            location=[lab_lat, lab_lon],
+            popup=folium.Popup(f"<b>{row['Lab']}</b><br>{row['distance_km']} km away", max_width=200),
+            tooltip=row['Lab'],
+            icon=folium.Icon(color="red", icon="flask", prefix="fa")
+        ).add_to(m)
 
-            st_folium(m, use_container_width=True, height=450)
+        # Dashed line from postcode to lab
+        folium.PolyLine(
+            locations=[[user_lat, user_lon], [lab_lat, lab_lon]],
+            color="gray",
+            weight=1.5,
+            dash_array="6"
+        ).add_to(m)
+
+    st_folium(m, use_container_width=True, height=450)
