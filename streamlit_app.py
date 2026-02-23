@@ -70,7 +70,7 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     result = result.sort_values('distance_m').head(n)
     result['Postcode'] = postcode
 
-    return result[['Postcode', 'Lab', 'distance_km', 'Easting', 'Northing']], postcode_row, None
+    return result[['Postcode', 'Lab', 'distance_km', 'Easting', 'Northing', 'Email']], postcode_row, None
 
 # --- UI ---
 col1, col2 = st.columns([2, 1])
