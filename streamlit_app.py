@@ -72,6 +72,10 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
 
     return result[['Postcode', 'Lab', 'distance_km', 'Easting', 'Northing', 'Email']], postcode_row, None
 
+st.session_state.setdefault('result', None)
+st.session_state.setdefault('postcode_row', None)
+st.session_state.setdefault('searched_postcode', None)
+
 # --- UI ---
 col1, col2 = st.columns([2, 1])
 
@@ -109,7 +113,7 @@ if st.session_state.result is not None:
         hide_index=True
     )
 
- # --- Map ---
+# --- Map ---
     user_lat, user_lon = to_latlon(postcode_row['Easting Grid Ref'], postcode_row['Northing Grid Ref'])
 
     m = folium.Map(location=[user_lat, user_lon], zoom_start=9, tiles="CartoDB positron")
