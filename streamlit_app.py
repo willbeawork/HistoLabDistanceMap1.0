@@ -104,7 +104,7 @@ if st.session_state.result is not None:
     st.success(f"Found {len(result)} closest lab(s) to **{st.session_state.searched_postcode}**")
 
     st.dataframe(
-        result[['Postcode', 'Lab', 'distance_km']].rename(columns={"distance_km": "Distance (km)"}),
+        result[['distance_km', 'Lab', 'Email']].rename(columns={"distance_km": "Distance (km)"}),
         use_container_width=True,
         hide_index=True
     )
@@ -119,7 +119,7 @@ if st.session_state.result is not None:
         location=[user_lat, user_lon],
         popup=folium.Popup(f"<b>Your postcode</b><br>{st.session_state.searched_postcode}", max_width=200),
         tooltip="Your postcode",
-        icon=folium.Icon(color="blue", icon="home", prefix="fa")
+        icon=folium.Icon(color="blue", icon="map-marker", prefix="fa")
     ).add_to(m)
 
     # Lab pins (red)
