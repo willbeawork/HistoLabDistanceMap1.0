@@ -7,18 +7,22 @@ st.set_page_config(page_title="Closest Lab Finder", page_icon="🔬", layout="ce
 st.title("🔬 Closest Histology Lab Finder")
 st.markdown("Enter a postcode to find the nearest histology labs.")
 
-# Load data
+# File uploaders
+with st.expander("📂 Upload data files", expanded=True):
+    postcode_file = st.file_uploader("Postcode grid reference CSV", type="csv", help="Should contain columns: Postcode, Easting Grid Ref, Northing Grid Ref")
+    labs_file = st.file_uploader("Histology labs CSV", type="csv", help="Should contain columns: Lab, Easting, Northing")
+
+if postcode_file is None or labs_file is None:
+    st.info("Please upload both CSV files above to get started.")
+    st.stop()
+
 @st.cache_data
-def load_data():
-    postcode_gridref_df = pd.read_csv("postcodes_short.csv")
-    df_labs = pd.read_csv("Histo labs example.csv")
+def load_data(postcode_file, labs_file):
+    postcode_gridref_df = pd.read_csv(postcode_file)
+    df_labs = pd.read_csv(labs_file)
     return postcode_gridref_df, df_labs
 
-try:
-    postcode_gridref_df, df_labs = load_data()
-except FileNotFoundError as e:
-    st.error(f"Could not load data files: {e}")
-    st.stop()
+postcode_gridref_df, df_labs = load_data(postcode_file, labs_file)
 
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     """
