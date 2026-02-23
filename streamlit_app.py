@@ -132,12 +132,4 @@ if st.session_state.result is not None:
             icon=folium.Icon(color="red", icon="flask", prefix="fa")
         ).add_to(m)
 
-        # Dashed line from postcode to lab
-        folium.PolyLine(
-            locations=[[user_lat, user_lon], [lab_lat, lab_lon]],
-            color="gray",
-            weight=1.5,
-            dash_array="6"
-        ).add_to(m)
-
     st_folium(m, use_container_width=True, height=450)
