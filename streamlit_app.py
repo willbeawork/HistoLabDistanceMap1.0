@@ -76,7 +76,7 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    postcode_input = st.text_input("Postcode", placeholder="e.g. SW1A 1AA")
+    postcode_input = st.text_input("Postcode", placeholder="e.g. EX5 2HD")
 with col2:
     n_labs = st.number_input("Number of labs", min_value=1, max_value=10, value=2)
 
@@ -89,15 +89,25 @@ if st.button("Find Closest Labs", type="primary"):
 
         if error:
             st.error(error)
+            st.session_state.result = None
         else:
-            st.success(f"Found {len(result)} closest lab(s) to **{postcode_input.strip().upper()}**")
+            # Save to session state so results persist across reruns
+            st.session_state.result = result
+            st.session_state.postcode_row = postcode_row
+            st.session_state.searched_postcode = postcode_input.strip().upper()
 
-            # Results table (hide Easting/Northing)
-            st.dataframe(
-                result[['Postcode', 'Lab', 'distance_km']].rename(columns={"distance_km": "Distance (km)"}),
-                use_container_width=True,
-                hide_index=True
-            )
+# --- Display results (from session state) ---
+if st.session_state.result is not None:
+    result = st.session_state.result
+    postcode_row = st.session_state.postcode_row
+
+    st.success(f"Found {len(result)} closest lab(s) to **{st.session_state.searched_postcode}**")
+
+    st.dataframe(
+        result[['Postcode', 'Lab', 'distance_km']].rename(columns={"distance_km": "Distance (km)"}),
+        use_container_width=True,
+        hide_index=True
+    )
 
             # --- Map ---
             user_lat, user_lon = to_latlon(postcode_row['Easting Grid Ref'], postcode_row['Northing Grid Ref'])
