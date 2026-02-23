@@ -1,29 +1,47 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
+import os
 
 st.set_page_config(page_title="Closest Lab Finder", page_icon="🔬", layout="centered")
 
 st.title("🔬 Closest Histology Lab Finder")
 st.markdown("Enter a postcode to find the nearest histology labs.")
 
-# File uploaders
-with st.expander("📂 Upload data files", expanded=True):
-    postcode_file = st.file_uploader("Postcode grid reference CSV", type="csv", help="Should contain columns: Postcode, Easting Grid Ref, Northing Grid Ref")
-    labs_file = st.file_uploader("Histology labs CSV", type="csv", help="Should contain columns: Lab, Easting, Northing")
+# --- Load data ---
+# Try to load from disk first (pre-loaded in repo), fall back to file uploaders
 
-if postcode_file is None or labs_file is None:
-    st.info("Please upload both CSV files above to get started.")
-    st.stop()
+POSTCODE_FILE = "postcodes_short.csv"
+LABS_FILE = "Histo labs example.csv"
 
 @st.cache_data
-def load_data(postcode_file, labs_file):
+def load_from_disk():
+    postcode_gridref_df = pd.read_csv(POSTCODE_FILE)
+    df_labs = pd.read_csv(LABS_FILE)
+    return postcode_gridref_df, df_labs
+
+@st.cache_data
+def load_from_uploads(postcode_file, labs_file):
     postcode_gridref_df = pd.read_csv(postcode_file)
     df_labs = pd.read_csv(labs_file)
     return postcode_gridref_df, df_labs
 
-postcode_gridref_df, df_labs = load_data(postcode_file, labs_file)
+files_on_disk = os.path.exists(POSTCODE_FILE) and os.path.exists(LABS_FILE)
 
+if files_on_disk:
+    postcode_gridref_df, df_labs = load_from_disk()
+else:
+    st.info("Default data files not found. Please upload them below.")
+    with st.expander("📂 Upload data files", expanded=True):
+        postcode_file = st.file_uploader("Postcode grid reference CSV", type="csv",
+                                          help="Columns needed: Postcode, Easting Grid Ref, Northing Grid Ref")
+        labs_file = st.file_uploader("Histology labs CSV", type="csv",
+                                      help="Columns needed: Lab, Easting, Northing")
+
+    if postcode_file is None or labs_file is None:
+        st.stop()
+
+    postcode_gridref_df, df_labs = load_from_uploads(postcode_file, labs_file)
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     """
     Find n closest labs to a postcode using Euclidean distance.
