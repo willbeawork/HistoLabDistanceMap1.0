@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
+import folium
+from streamlit_folium import st_folium
+from pyproj import Transformer
 import os
 
 st.set_page_config(page_title="Closest Lab Finder", page_icon="🔬", layout="centered")
@@ -8,9 +11,14 @@ st.set_page_config(page_title="Closest Lab Finder", page_icon="🔬", layout="ce
 st.title("🔬 Closest Histology Lab Finder")
 st.markdown("Enter a postcode to find the nearest histology labs.")
 
-# --- Load data ---
-# Try to load from disk first (pre-loaded in repo), fall back to file uploaders
+# --- Coordinate converter: British National Grid -> Lat/Lon ---
+transformer = Transformer.from_crs("EPSG:27700", "EPSG:4326", always_xy=True)
 
+def to_latlon(easting, northing):
+    lon, lat = transformer.transform(easting, northing)
+    return lat, lon
+
+# --- Load data ---
 POSTCODE_FILE = "postcodes_short.csv"
 LABS_FILE = "Histo labs example.csv"
 
@@ -37,24 +45,17 @@ else:
                                           help="Columns needed: Postcode, Easting Grid Ref, Northing Grid Ref")
         labs_file = st.file_uploader("Histology labs CSV", type="csv",
                                       help="Columns needed: Lab, Easting, Northing")
-
     if postcode_file is None or labs_file is None:
         st.stop()
-
     postcode_gridref_df, df_labs = load_from_uploads(postcode_file, labs_file)
-def find_closest_labs(postcode, labs_df, postcode_df, n=2):
-    """
-    Find n closest labs to a postcode using Euclidean distance.
-    Returns dataframe with closest labs and distances in km.
-    """
-    # Normalise postcode: uppercase and strip extra spaces
-    postcode = postcode.strip().upper()
 
-    # Try to find exact match first, then try normalised version
+# --- Core function ---
+def find_closest_labs(postcode, labs_df, postcode_df, n=2):
+    postcode = postcode.strip().upper()
     match = postcode_df[postcode_df['Postcode'].str.strip().str.upper() == postcode]
-    
+
     if match.empty:
-        return None, f"Postcode '{postcode}' not found in database."
+        return None, None, f"Postcode '{postcode}' not found in database."
 
     postcode_row = match.iloc[0]
 
@@ -66,18 +67,16 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     result = labs_df.copy()
     result['distance_m'] = distances
     result['distance_km'] = (result['distance_m'] / 1000).round(1)
-
     result = result.sort_values('distance_m').head(n)
     result['Postcode'] = postcode
 
-    return result[['Lab', 'Email', 'distance_km']], None
+    return result[['Postcode', 'Lab', 'distance_km', 'Easting', 'Northing']], postcode_row, None
 
 # --- UI ---
 col1, col2 = st.columns([2, 1])
 
 with col1:
     postcode_input = st.text_input("Postcode", placeholder="e.g. SW1A 1AA")
-
 with col2:
     n_labs = st.number_input("Number of labs", min_value=1, max_value=10, value=2)
 
@@ -86,14 +85,41 @@ if st.button("Find Closest Labs", type="primary"):
         st.warning("Please enter a postcode.")
     else:
         with st.spinner("Searching..."):
-            result, error = find_closest_labs(postcode_input, df_labs, postcode_gridref_df, n=n_labs)
+            result, postcode_row, error = find_closest_labs(postcode_input, df_labs, postcode_gridref_df, n=n_labs)
 
         if error:
             st.error(error)
         else:
             st.success(f"Found {len(result)} closest lab(s) to **{postcode_input.strip().upper()}**")
+
+            # Results table (hide Easting/Northing)
             st.dataframe(
-                result.rename(columns={"distance_km": "Distance (km)"}),
+                result[['Postcode', 'Lab', 'distance_km']].rename(columns={"distance_km": "Distance (km)"}),
                 use_container_width=True,
                 hide_index=True
             )
+
+            # --- Map ---
+            user_lat, user_lon = to_latlon(postcode_row['Easting Grid Ref'], postcode_row['Northing Grid Ref'])
+
+            m = folium.Map(location=[user_lat, user_lon], zoom_start=9, tiles="CartoDB positron")
+
+            # User postcode pin (blue)
+            folium.Marker(
+                location=[user_lat, user_lon],
+                popup=folium.Popup(f"<b>Your postcode</b><br>{postcode_input.strip().upper()}", max_width=200),
+                tooltip="Your postcode",
+                icon=folium.Icon(color="blue", icon="home", prefix="fa")
+            ).add_to(m)
+
+            # Lab pins (red)
+            for _, row in result.iterrows():
+                lab_lat, lab_lon = to_latlon(row['Easting'], row['Northing'])
+                folium.Marker(
+                    location=[lab_lat, lab_lon],
+                    popup=folium.Popup(f"<b>{row['Lab']}</b><br>{row['distance_km']} km away", max_width=200),
+                    tooltip=row['Lab'],
+                    icon=folium.Icon(color="red", icon="flask", prefix="fa")
+                ).add_to(m)
+
+            st_folium(m, use_container_width=True, height=450)
