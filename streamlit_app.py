@@ -31,27 +31,6 @@ def load_from_disk():
     df_labs = pd.read_csv(LABS_FILE)
     return postcode_gridref_df, df_labs
 
-#@st.cache_data
-#def load_from_uploads(postcode_file, labs_file):
-    #postcode_gridref_df = pd.read_csv(postcode_file)
-    #df_labs = pd.read_csv(labs_file)
-    #return postcode_gridref_df, df_labs
-
-#files_on_disk = os.path.exists(POSTCODE_FILE) and os.path.exists(LABS_FILE)
-
-#if files_on_disk:
-   # postcode_gridref_df, df_labs = load_from_disk()
-#else:
-   # st.info("Default data files not found. Please upload them below.")
-   # with st.expander("📂 Upload data files", expanded=True):
-       # postcode_file = st.file_uploader("Postcode grid reference CSV", type="csv",
-                                          help="Columns needed: Postcode, Easting Grid Ref, Northing Grid Ref")
-      #  labs_file = st.file_uploader("Histology labs CSV", type="csv",
-                                      help="Columns needed: Lab, Easting, Northing")
-    #if postcode_file is None or labs_file is None:
-      # st.stop()
-   # postcode_gridref_df, df_labs = load_from_uploads(postcode_file, labs_file)
-
 # --- Core function ---
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     postcode = postcode.strip().upper()
