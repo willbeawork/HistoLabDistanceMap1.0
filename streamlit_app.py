@@ -31,26 +31,26 @@ def load_from_disk():
     df_labs = pd.read_csv(LABS_FILE)
     return postcode_gridref_df, df_labs
 
-@st.cache_data
-def load_from_uploads(postcode_file, labs_file):
-    postcode_gridref_df = pd.read_csv(postcode_file)
-    df_labs = pd.read_csv(labs_file)
-    return postcode_gridref_df, df_labs
+#@st.cache_data
+#def load_from_uploads(postcode_file, labs_file):
+    #postcode_gridref_df = pd.read_csv(postcode_file)
+    #df_labs = pd.read_csv(labs_file)
+    #return postcode_gridref_df, df_labs
 
-files_on_disk = os.path.exists(POSTCODE_FILE) and os.path.exists(LABS_FILE)
+#files_on_disk = os.path.exists(POSTCODE_FILE) and os.path.exists(LABS_FILE)
 
-if files_on_disk:
-    postcode_gridref_df, df_labs = load_from_disk()
-else:
-    st.info("Default data files not found. Please upload them below.")
-    with st.expander("📂 Upload data files", expanded=True):
-        postcode_file = st.file_uploader("Postcode grid reference CSV", type="csv",
+#if files_on_disk:
+   # postcode_gridref_df, df_labs = load_from_disk()
+#else:
+   # st.info("Default data files not found. Please upload them below.")
+   # with st.expander("📂 Upload data files", expanded=True):
+       # postcode_file = st.file_uploader("Postcode grid reference CSV", type="csv",
                                           help="Columns needed: Postcode, Easting Grid Ref, Northing Grid Ref")
-        labs_file = st.file_uploader("Histology labs CSV", type="csv",
+      #  labs_file = st.file_uploader("Histology labs CSV", type="csv",
                                       help="Columns needed: Lab, Easting, Northing")
-    if postcode_file is None or labs_file is None:
-        st.stop()
-    postcode_gridref_df, df_labs = load_from_uploads(postcode_file, labs_file)
+    #if postcode_file is None or labs_file is None:
+      # st.stop()
+   # postcode_gridref_df, df_labs = load_from_uploads(postcode_file, labs_file)
 
 # --- Core function ---
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
@@ -63,8 +63,8 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     postcode_row = match.iloc[0]
 
     distances = np.sqrt(
-        (labs_df['Easting'] - postcode_row['Easting Grid Ref'])**2 +
-        (labs_df['Northing'] - postcode_row['Northing Grid Ref'])**2
+        (labs_df['OSEAST100M'] - postcode_row['OSEAST100Mf'])**2 +
+        (labs_df['OSNRTH100M'] - postcode_row['OSNRTH100M'])**2
     )
 
     result = labs_df.copy()
@@ -73,7 +73,7 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     result = result.sort_values('distance_m').head(n)
     result['Postcode'] = postcode
 
-    return result[['Postcode', 'Lab', 'distance_km', 'Easting', 'Northing', 'Email']], postcode_row, None
+    return result[['Postcode', 'Lab Name', 'distance_km', 'Easting', 'Northing', 'Email Address']], postcode_row, None
 
 st.session_state.setdefault('result', None)
 st.session_state.setdefault('postcode_row', None)
