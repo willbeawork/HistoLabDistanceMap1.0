@@ -19,8 +19,11 @@ def to_latlon(easting, northing):
     return lat, lon
 
 # --- Load data ---
-POSTCODE_FILE = "postcodes_short.csv"
-LABS_FILE = "Histo labs example.csv"
+#POSTCODE_FILE = "postcodes_short.csv"
+#LABS_FILE = "Histo labs example.csv"
+
+POSTCODE_FILE = "ExtraReducedPostcodes.csv"
+LABS_FILE = "nhs_histopath_labs_full.csv"
 
 @st.cache_data
 def load_from_disk():
