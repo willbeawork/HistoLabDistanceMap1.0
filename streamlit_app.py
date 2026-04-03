@@ -29,7 +29,7 @@ labs_df.columns = labs_df.columns.str.strip()
 # --- Core function ---
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     postcode = postcode.strip().upper()
-    match = postcode_df[postcode_df['Postcode'].str.strip().str.upper() == postcode]
+    match = postcode_df[postcode_df['PCDS'].str.strip().str.upper() == postcode]
 
     if match.empty:
         return None, None, f"Postcode '{postcode}' not found in database."
@@ -109,7 +109,7 @@ if st.session_state.result is not None:
         folium.Marker(
             location=[lab_lat, lab_lon],
             popup=folium.Popup(f"<b>{row['Lab Name']}</b><br>{row['distance_km']} km away", max_width=200),
-            tooltip=row['Lab'],
+            tooltip=row['Lab Name'],
             icon=folium.Icon(color="red", icon="flask", prefix="fa")
         ).add_to(m)
 
