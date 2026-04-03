@@ -91,6 +91,10 @@ if st.session_state.result is not None:
     )
 
 # --- Map ---
+    def to_latlon(easting, northing):
+    lon, lat = transformer.transform(easting * 100, northing * 100)
+    return lat, lon
+    
     user_lat, user_lon = to_latlon(postcode_row['OSEAST100M'], postcode_row['OSNRTH100M'])
 
     m = folium.Map(location=[user_lat, user_lon], zoom_start=9, tiles="CartoDB positron")
