@@ -36,7 +36,7 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     postcode_row = match.iloc[0]
 
     distances = np.sqrt(
-        (labs_df['OSEAST100M'] - postcode_row['OSEAST100Mf'])**2 +
+        (labs_df['OSEAST100M'] - postcode_row['OSEAST100M'])**2 +
         (labs_df['OSNRTH100M'] - postcode_row['OSNRTH100M'])**2
     )
 
@@ -84,13 +84,13 @@ if st.session_state.result is not None:
     st.success(f"Found {len(result)} closest lab(s) to **{st.session_state.searched_postcode}**")
 
     st.dataframe(
-        result[['distance_km', 'Lab', 'Email']].rename(columns={"distance_km": "Distance (km)"}),
+        result[['distance_km', 'Lab Name', 'Email Address']].rename(columns={"distance_km": "Distance (km)"}),
         use_container_width=True,
         hide_index=True
     )
 
 # --- Map ---
-    user_lat, user_lon = to_latlon(postcode_row['Easting Grid Ref'], postcode_row['Northing Grid Ref'])
+    user_lat, user_lon = to_latlon(postcode_row['OSEAST100M'], postcode_row['OSNRTH100M'])
 
     m = folium.Map(location=[user_lat, user_lon], zoom_start=9, tiles="CartoDB positron")
 
@@ -107,7 +107,7 @@ if st.session_state.result is not None:
         lab_lat, lab_lon = to_latlon(row['Easting'], row['Northing'])
         folium.Marker(
             location=[lab_lat, lab_lon],
-            popup=folium.Popup(f"<b>{row['Lab']}</b><br>{row['distance_km']} km away", max_width=200),
+            popup=folium.Popup(f"<b>{row['Lab Name']}</b><br>{row['distance_km']} km away", max_width=200),
             tooltip=row['Lab'],
             icon=folium.Icon(color="red", icon="flask", prefix="fa")
         ).add_to(m)
