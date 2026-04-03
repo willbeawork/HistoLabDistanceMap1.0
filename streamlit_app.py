@@ -91,7 +91,7 @@ if st.session_state.result is not None:
     )
 
 # --- Map ---
-    def to_latlon(easting, northing):
+def to_latlon(easting, northing):
     lon, lat = transformer.transform(easting * 100, northing * 100)
     return lat, lon
     
