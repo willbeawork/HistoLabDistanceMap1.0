@@ -22,7 +22,7 @@ def to_latlon(easting, northing):
 #POSTCODE_FILE = "postcodes_short.csv"
 #LABS_FILE = "Histo labs example.csv"
 
-postcode_df = pd.read_csv("ExtraReducedPostcodes.csv")
+postcode_gridref_df = pd.read_csv("ExtraReducedPostcodes.csv")
 labs_df = pd.read_csv("nhs_histopath_labs_full.csv")
 
 # --- Core function ---
@@ -65,7 +65,7 @@ if st.button("Find Closest Labs", type="primary"):
         st.warning("Please enter a postcode.")
     else:
         with st.spinner("Searching..."):
-            result, postcode_row, error = find_closest_labs(postcode_input, df_labs, postcode_gridref_df, n=n_labs)
+            result, postcode_row, error = find_closest_labs(postcode_input, labs_df, postcode_gridref_df, n=n_labs)
 
         if error:
             st.error(error)
