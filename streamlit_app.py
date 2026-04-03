@@ -42,7 +42,7 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     )
 
     result = labs_df.copy()
-    result['distance_m'] = distances
+    result['distance_m'] = distances * 100
     result['distance_km'] = (result['distance_m'] / 1000).round(1)
     result = result.sort_values('distance_m').head(n)
     result['Postcode'] = postcode
