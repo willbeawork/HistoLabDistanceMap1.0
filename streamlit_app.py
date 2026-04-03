@@ -19,11 +19,12 @@ def to_latlon(easting, northing):
     return lat, lon
 
 # --- Load data ---
-#POSTCODE_FILE = "postcodes_short.csv"
-#LABS_FILE = "Histo labs example.csv"
-
 postcode_gridref_df = pd.read_csv("ExtraReducedPostcodes.csv")
+postcode_gridref_df.columns = postcode_gridref_df.columns.str.strip()
+
 labs_df = pd.read_csv("nhs_histopath_labs_full.csv")
+labs_df.columns = labs_df.columns.str.strip()
+
 
 # --- Core function ---
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
