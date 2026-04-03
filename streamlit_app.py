@@ -47,7 +47,7 @@ def find_closest_labs(postcode, labs_df, postcode_df, n=2):
     result = result.sort_values('distance_m').head(n)
     result['Postcode'] = postcode
 
-    return result[['Postcode', 'Lab Name', 'distance_km', 'Easting', 'Northing', 'Email Address']], postcode_row, None
+    return result[['Postcode', 'Lab Name', 'distance_km', 'OSEAST100M', 'OSNRTH100M', 'Email Address']], postcode_row, None
 
 st.session_state.setdefault('result', None)
 st.session_state.setdefault('postcode_row', None)
@@ -105,7 +105,7 @@ if st.session_state.result is not None:
 
     # Lab pins (red)
     for _, row in result.iterrows():
-        lab_lat, lab_lon = to_latlon(row['Easting'], row['Northing'])
+        lab_lat, lab_lon = to_latlon(row['OSEAST100M'], row['OSNRTH100M'])
         folium.Marker(
             location=[lab_lat, lab_lon],
             popup=folium.Popup(f"<b>{row['Lab Name']}</b><br>{row['distance_km']} km away", max_width=200),
