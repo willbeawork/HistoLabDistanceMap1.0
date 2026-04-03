@@ -22,14 +22,8 @@ def to_latlon(easting, northing):
 #POSTCODE_FILE = "postcodes_short.csv"
 #LABS_FILE = "Histo labs example.csv"
 
-POSTCODE_FILE = "ExtraReducedPostcodes.csv"
-LABS_FILE = "nhs_histopath_labs_full.csv"
-
-@st.cache_data
-def load_from_disk():
-    postcode_gridref_df = pd.read_csv(POSTCODE_FILE)
-    df_labs = pd.read_csv(LABS_FILE)
-    return postcode_gridref_df, df_labs
+postcode_df = pd.read_csv("ExtraReducedPostcodes.csv")
+labs_df = pd.read_csv("nhs_histopath_labs_full.csv")
 
 # --- Core function ---
 def find_closest_labs(postcode, labs_df, postcode_df, n=2):
@@ -62,7 +56,7 @@ st.session_state.setdefault('searched_postcode', None)
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    postcode_input = st.text_input("Postcode", placeholder="e.g. EX5 2HD")
+    postcode_input = st.text_input("Postcode", placeholder="e.g. SW1A 1AA")
 with col2:
     n_labs = st.number_input("Number of labs", min_value=1, max_value=10, value=2)
 
