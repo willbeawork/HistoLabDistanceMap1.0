@@ -19,10 +19,10 @@ def to_latlon(easting, northing):
     return lat, lon
 
 # --- Load data ---
-postcode_gridref_df = pd.read_csv("ExtraReducedPostcodes.csv")
+postcode_gridref_df = pd.read_csv("ExtraReducedPostcodes.autoshortened.csv")
 postcode_gridref_df.columns = postcode_gridref_df.columns.str.strip()
 
-labs_df = pd.read_csv("nhs_histopath_labs_full.csv")
+labs_df = pd.read_csv("Fake_email_histo_lab_dataset.csv")
 labs_df.columns = labs_df.columns.str.strip()
 
 
