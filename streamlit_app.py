@@ -85,7 +85,7 @@ if st.session_state.result is not None:
     st.success(f"Found {len(result)} closest lab(s) to **{st.session_state.searched_postcode}**")
 
     st.dataframe(
-        result[['distance_km', 'Lab Name', 'Email Address']].rename(columns={"distance_km": "Distance (km)"}),
+        result[['distance_km', 'Lab Name', 'Fake Email']].rename(columns={"distance_km": "Distance (km)"}),
         use_container_width=True,
         hide_index=True
     )
