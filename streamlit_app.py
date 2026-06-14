@@ -1,3 +1,4 @@
+#import required librarys
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -6,10 +7,42 @@ from streamlit_folium import st_folium
 from pyproj import Transformer
 import os
 
-st.set_page_config(page_title="Closest Lab Finder", page_icon="🔬", layout="centered")
+#Top of page configuration for all 3 search functions
+st.set_page_config(page_title="Find that lab for genetics clinicans", layout="wide")
+st.title("Find that lab for genetics clinicans")
+st.write(f"Developed for use by cancer genetics clinicans")
 
-st.title("🔬 Closest Histology Lab Finder")
-st.markdown("Enter a postcode to find the nearest histology labs.")
+# --- This has to be FIRST, before calling the session state ---
+if "selected_option" not in st.session_state:
+    st.session_state.selected_option = "Histology Lab Finder"
+
+st.write(f"🔍 **Current Search Mode:** {st.session_state.selected_option}")
+
+#Set State Selection and default to histo
+def select_option(option):
+    st.session_state.selected_option = option
+
+if "selected_option" not in st.session_state:
+    st.session_state.selected_option = "Histology Lab Finder"   # Default pre-selected
+
+#Set up 3 buttons
+left, middle, right = st.columns(3)
+
+with left:
+    if st.button("*Histology Lab Finder*",width="stretch"):
+        select_option("Histology Lab Finder")
+
+with middle:
+    if st.button("*Genetics Lab Finder*",width="stretch"):
+        select_option("Genetics Lab Finder")
+
+with right:
+    if st.button("*Phlebotomy*",width="stretch"):
+        select_option("Phlebotomy")
+
+#Histology Mode functions
+if st.session_state.selected_option == "Histology Lab Finder":
+    st.subheader("Complete postcode")
 
 # --- Coordinate converter: British National Grid -> Lat/Lon ---
 transformer = Transformer.from_crs("EPSG:27700", "EPSG:4326", always_xy=True)
