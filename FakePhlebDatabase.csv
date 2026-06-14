@@ -1,0 +1,13 @@
+Phleb Name,Address,Fake Phone Number,Appointment Required Details,Opening Hours Details,Paediatric Details,Additional Restrictions,Postcode,OSEAST100M,OSNRTH100M
+Exeter,"Royal Devon and Exeter Hospital, Barrack Road, Exeter, EX2 5DW",01234 56789,"No, Drop-in Clinic",09:00-17:00,"Yes, XXXXXXXX",N/A,EX2 5DW,293700,91900
+Newton Abbot,"Newton Abbot Community Hospital, Jetty Marsh Road, Newton Abbot, TQ12 2TS",01234 56789,"Yes, call 01234 56789 between 9 and 4",08:00-16:00,No,N/A,TQ12 2TS,285800,72300
+Torbay,"Torbay Hospital, Lowes Bridge, Torquay, TQ2 7AA",01234 56789,"No, Drop-in Clinic",09:00-16:00,"Yes, XXXXXXXX",N/A,TQ2 7AA,289900,65900
+Dawlish,"Dawlish Community Hospital, Barton Terrace, Dawlish, EX7 9DH",01234 56789,"Yes, call 01234 56789 between 9 and 4",08:30-16:30,No,N/A,EX7 9DH,295700,76700
+Penzance,"West Cornwall Hospital, St Clare Street, Penzance, TR18 2PF",01234 56789,"No, Drop-in Clinic",09:00-17:00,"Yes, XXXXXXXX",N/A,TR18 2PF,146800,30700
+Truro,"Royal Cornwall Hospital, Treliske, Truro, TR1 3LJ",01234 56789,"Yes, call 01234 56789 between 9 and 4",08:00-16:00,No,N/A,TR1 3LJ,179800,45300
+Barnstaple,"North Devon District Hospital, Raleigh Park, Barnstaple, EX31 4JB",01234 56789,"No, Drop-in Clinic",09:00-16:00,"Yes, XXXXXXXX",N/A,EX31 4JB,256500,134500
+Yeovil,"Yeovil Hospital, Higher Kingston, Yeovil, BA21 4AT",01234 56789,"Yes, call 01234 56789 between 9 and 4",08:30-16:30,No,N/A,BA21 4AT,355500,116300
+Taunton,"Musgrove Park Hospital, Musgrove Road, Taunton, TA1 5DA",01234 56789,"Yes, call 01234 56789 between 9 and 4",09:00-17:00,"Yes, XXXXXXXX",N/A,TA1 5DA,321400,124200
+Bristol,"Southmead Hospital, Southmead Road, Westbury-on-Trym, Bristol, BS10 5NB",01234 56789,"No, Drop-in Clinic",08:00-16:00,No,N/A,BS10 5NB,359100,177500
+Burnham-on-Sea,"Burnham-on-Sea War Memorial Hospital, 6 Love Lane, Burnham-on-Sea, TA8 1ED",01234 56789,"Yes, call 01234 56789 between 9 and 4",09:00-16:00,"Yes, XXXXXXXX",Need to be a patient of a local GP and bring stickers,TA8 1ED,330700,149300
+Plymouth,"Derriford Hospital, Derriford Road, Plymouth, PL6 8DH",01234 56789,"No, Drop-in Clinic",08:30-16:30,No,N/A,PL6 8DH,249900,59600
